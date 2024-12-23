@@ -17,7 +17,7 @@ const userInfoStore = useUserInfoStore(pinia)
 //全局前置守卫
 router.beforeEach(async (to, from, next) => {
   const token = getToken()
-  const userInfo = !!userInfoStore.nickName
+  const userInfo = !!userInfoStore.nickname
   if (token) {
     if (to.path == "/login") {
       next({ path: "/" })

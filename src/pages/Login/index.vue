@@ -20,7 +20,7 @@
       <el-form-item label="密码" prop="userPwd">
         <el-input
             type="password"
-            v-model="loginForm.userPwd"
+            v-model="loginForm.password"
             autocomplete="off"
             placeholder="请输入密码"
         ></el-input>
@@ -42,7 +42,7 @@ export default defineComponent({
 </script>
 <script lang="ts" setup>
 import {ref} from "vue"
-import {useUserInfoStore} from '../../stores/userInfo';
+import {useUserInfoStore} from '../../stores/userInfo.js';
 
 import type {FormInstance} from 'element-plus';
 import {useRouter} from 'vue-router'
@@ -53,13 +53,13 @@ const formRef = ref<FormInstance>()
 const loading = ref(false)
 //账号密码参数
 const loginForm = ref({
-  username: "zhangsan",
-  userPwd: "123456",
+  username: "",
+  password: "",
 })
 // 校验规则
 const validateUsername = (rule: any, value: any, callback: any) => {
-  if (value.length < 4) {
-    callback(new Error('用户名长度不能小于4位'))
+  if (value.length < 2) {
+    callback(new Error('用户名长度不能小于2位'))
   } else {
     callback()
   }
@@ -75,7 +75,7 @@ const validatePassword = (rule: any, value: any, callback: any) => {
 // 校验规则
 const loginRules = {
   username: [{required: true, validator: validateUsername}],
-  userPwd: [{required: true, trigger: 'blur', validator: validatePassword}]
+  password: [{required: true, trigger: 'blur', validator: validatePassword}]
 }
 //点击登录的回调
 const login = async () => {

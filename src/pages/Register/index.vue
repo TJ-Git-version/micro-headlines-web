@@ -8,12 +8,12 @@
         :rules="registerRules"
     >
       <h2>用户注册</h2>
-      <el-form-item label="姓名" prop="nickName">
+      <el-form-item label="姓名" prop="nickname">
         <el-input
-            v-model="registerForm.nickName"
+            v-model="registerForm.nickname"
             autocomplete="off"
-            ref="nickName"
-            name="nickName"
+            ref="nickname"
+            name="nickname"
             placeholder="请输入姓名"
         ></el-input>
       </el-form-item>
@@ -67,7 +67,7 @@ export default defineComponent({
 import {ref} from "vue"
 import {useRouter} from 'vue-router'
 import {ElMessage, FormInstance} from 'element-plus';
-import {registerValidateApi, registerApi} from "../../api/index"
+import {registerValidateApi, registerApi} from "../../api/index.js"
 
 const router = useRouter()
 // 初始化注册参数
@@ -75,13 +75,13 @@ const registerForm = ref({
   username: "",
   userPwd: "",
   confirmPassword: "",
-  nickName: ''
+  nickname: ''
 })
 const formRef = ref<FormInstance>()
 // 校验规则
 const validateUsername = (rule: any, value: any, callback: any) => {
-  if (value.length < 4) {
-    callback(new Error('用户名长度不能小于4位'))
+  if (value.length < 2) {
+    callback(new Error('用户名长度不能小于2位'))
   } else {
     callback()
   }
@@ -103,16 +103,16 @@ const validateConfirmPassword = (rule: any, value: any, callback: any) => {
   }
 }
 // 校验规则
-const validateNickName = (rule: any, value: any, callback: any) => {
-  if (value.length >= 2 && value.length <= 6) {
+const validatenickName = (rule: any, value: any, callback: any) => {
+  if (value.length >= 2 && value.length <= 10) {
     callback()
   } else {
-    callback(new Error('姓名必须在2-6位'))
+    callback(new Error('姓名必须在2-10位'))
   }
 }
 // 校验规则
 const registerRules = {
-  nickName: [{required: true, trigger: 'blur', validator: validateNickName}],
+  nickname: [{required: true, trigger: 'blur', validator: validateNickName}],
   username: [{required: true, validator: validateUsername}],
   userPwd: [{required: true, trigger: 'blur', validator: validatePassword}],
   confirmPassword: [{required: true, trigger: 'blur', validator: validateConfirmPassword}]
@@ -127,12 +127,12 @@ const register = async () => {
     //  整理参数
     const obj = {
       username: "",
-      userPwd: "",
-      nickName: ''
+      password: "",
+      nickname: ''
     }
     obj.username = registerForm.value.username
-    obj.userPwd = registerForm.value.userPwd
-    obj.nickName = registerForm.value.nickName
+    obj.password = registerForm.value.userPwd
+    obj.nickname = registerForm.value.nickname
     //  调用注册接口
     await registerApi(obj)
     formRef.value?.resetFields()

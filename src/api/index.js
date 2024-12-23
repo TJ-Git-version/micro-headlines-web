@@ -2,12 +2,12 @@ import request from "../utils/request"
 
 // portal/findAllTypes
 //获取分类列表
-export const getfindAllTypes = () => {
-  return request.get("portal/findAllTypes");
+export const findNewsClassifyList = () => {
+  return request.get("news-classify/findNewsClassifyList");
 };
 // 分页带条件查询所有头条
-export const getfindNewsPageInfo = (info) => {
-  return request.post("portal/findNewsPage",info);
+export const getNewsListPage = (info) => {
+  return request.post("news/getNewsListPage",info);
 };
 // 查看头条详情
 export const getshowHeadlineDetail = (id) => {
@@ -36,7 +36,7 @@ export const removeByHid = (id) => {
 
 //登录的接口
 export const getLogin = (info) => {
-  return request.post("user/login",info);
+  return request.post("portal/loginUser",info);
 };
 //获取用户信息的接口
 export const getUserInfo = (info) => {
@@ -47,7 +47,7 @@ export const getUserInfo = (info) => {
 export const registerValidateApi = (username) => {
     return request({
          method: "post",
-            url: "user/checkUserName",
+            url: "portal/checkUserNameExist",
             headers: {
             "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
             },
@@ -57,7 +57,7 @@ export const registerValidateApi = (username) => {
 
 // 注册的接口
 export const registerApi = (userInfo) => {
-  return request.post("user/regist",userInfo)
+  return request.post("/portal/registerUser",userInfo)
 }
 //判断用户登录过期的接口
 export const isUserOverdue = () => {

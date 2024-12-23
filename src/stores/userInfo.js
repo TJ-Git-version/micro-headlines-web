@@ -1,6 +1,7 @@
 import {defineStore} from 'pinia';
 import {getToken, removeToken, setToken} from '../utils/token-utils';
-import {getLogin, getUserInfo} from '../api/index';
+import {getUserInfo, removeUserInfo, setUserInfo} from '../utils/user-utils.ts';
+import {getLogin} from '../api/index';
 
 
 /**
@@ -11,7 +12,7 @@ export const useUserInfoStore = defineStore('userInfo', {
 
     state: () => ({
         token: getToken(),
-        nickName: '',
+        nickname: '',
         uid: '',
     }),
 
@@ -24,22 +25,24 @@ export const useUserInfoStore = defineStore('userInfo', {
             const token = result.token
 
             this.token = token
-            setToken(token)
+            console.log(result)
+            setUserInfo(JSON.stringify(result))
+            setToken(token) // 设置全局请求头
         },
-        async getInfo() {
-            const result = await getUserInfo()
-            this.nickName = result.loginUser.nickName
-            this.uid = result.loginUser.uid
+        getInfo() {
+            // const result = await getUserInfo()
+            const userInfo = JSON.parse(getUserInfo());
+            if (userInfo) {
+                this.nickname = userInfo.nickname === '' ? userInfo.username : userInfo.nickname
+                this.uid = userInfo.id
+            }
         },
         initUserInfo() {
             removeToken()
-            this.nickName = ""
+            removeUserInfo()
+            this.nickname = ""
             this.uid = ""
             console.log('1111111111');
-
         }
-
     },
-
-
 });

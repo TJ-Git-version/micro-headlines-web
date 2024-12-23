@@ -4,6 +4,7 @@ import pinia from '../stores/index';
 import {useUserInfoStore} from '../stores/userInfo';
 import NProgress from "nprogress";
 import "nprogress/nprogress.css";
+import router from "../routers/index.js";
 // 配置新建一个 axios 实例
 const service = axios.create({
     baseURL: "/app-dev/",
@@ -18,7 +19,7 @@ service.interceptors.request.use((config) => {
     const token = userInfoStore.token
     if (token) {
         // config.headers['token'] = token  // 报错: headers对象并没有声明有token, 不能随便添加
-        (config.headers)['token'] = token
+        (config.headers)['micro-token-api'] = token
     }
     return config;
 });
@@ -28,12 +29,19 @@ service.interceptors.response.use(
     (response) => {
         NProgress.done()//关闭进度条
 
-        if (response.data.code !== 200) {
+        // 未登录,跳转登录页
+        if (response.data.code === 530 || response.data.code === 531) {
+            console.log(1)
+            router.push({name: "Login"});
+        }
+
+        if (response.data.code !== 200 && response.data.code !== 201) {
             // 判断响应状态码
-            if (response.data.code == 501) return Promise.reject(ElMessage.error("用户名有误"))
-            else if (response.data.code == 503) return Promise.reject(ElMessage.error("密码有误"))
-            else if (response.data.code == 504) return Promise.reject(ElMessage.error("登录已过期"))
-            else if (response.data.code == 505) return Promise.reject(ElMessage.error("用户名占用"))
+            // if (response.data.code == 501) return Promise.reject(ElMessage.error("用户名有误"))
+            // else if (response.data.code == 503) return Promise.reject(ElMessage.error("密码有误"))
+            // else if (response.data.code == 504) return Promise.reject(ElMessage.error("登录已过期"))
+            // else if (response.data.code == 505) return Promise.reject(ElMessage.error("用户名占用"))
+            return Promise.reject(ElMessage.error(response.data.message))
         } else {
             return response.data.data; /* 返回成功响应数据中的data属性数据 */
         }

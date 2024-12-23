@@ -3,8 +3,8 @@
     <!-- 头部左侧区域 -->
     <div class="left">
       <ul>
-        <li @click="HighlightHandler(index,)" v-for="(item,index) in findAllTypeList" :key="item.tid">
-          <a :class="{ active: item.isHighlight }" href="javascript:;">{{ item.tname }}</a>
+        <li @click="HighlightHandler(index,)" v-for="(item,index) in findAllTypeList" :key="item.id">
+          <a :class="{ active: item.isHighlight }" href="javascript:;">{{ item.name }}</a>
         </li>
       </ul>
     </div>
@@ -20,10 +20,10 @@
       <div class="btn-dropdown">
         <!-- 用户没有登录的时候的展示 -->
 
-        <div v-if="nickName" style="display: flex; justify-content: center; align-items: center;">
+        <div v-if="nickname" style="display: flex; justify-content: center; align-items: center;">
           <el-dropdown>
             <el-button type="primary">
-              您好:{{ nickName }}
+              您好:{{ nickname }}
               <el-icon class="el-icon--right">
                 <arrow-down/>
               </el-icon>
@@ -57,7 +57,7 @@ export default defineComponent({
 </script>
 
 <script setup>
-import {getfindAllTypes, isUserOverdue} from '../api/index'
+import {findNewsClassifyList, isUserOverdue} from '../api/index'
 import {ref, onMounted, getCurrentInstance, watch, onUpdated} from "vue"
 import {useRouter} from 'vue-router'
 import {ArrowDown} from '@element-plus/icons-vue'
@@ -66,7 +66,7 @@ import pinia from '../stores/index';
 import {useUserInfoStore} from '../stores/userInfo'
 
 const userInfoStore = useUserInfoStore(pinia)
-const nickName = ref("")
+const nickname = ref("")
 // 获取到 全局事件总线
 const {Bus} = getCurrentInstance().appContext.config.globalProperties
 const router = useRouter()
@@ -84,26 +84,30 @@ const toRegister = () => {
   router.push({name: "Register"});
 }
 const getList = async () => {
-  let result = await getfindAllTypes()
+  let result = await findNewsClassifyList()
   // 遍历数据添加高亮标识
   result.forEach((item) => {
-    item.tid = item.tid
-    item.tname = item.tname
+    item.id = item.id
+    item.name = item.name
     item.isHighlight = false
   })
   // 添加微头条数据
   result.unshift({
     isHighlight: true,
-    tid: 0,
-    tname: "微头条"
+    id: 0,
+    name: "微头条"
   })
   findAllTypeList.value = result
 }
 // 页面挂载的生命周期回调
 onUpdated(() => {
-  nickName.value = userInfoStore.nickName
+
 })
 onMounted(() => {
+  userInfoStore.getInfo()
+  nickname.value = userInfoStore.nickname
+  console.log(userInfoStore.nickname, "nickname")
+  console.log(userInfoStore.uid, "uid")
   getList()
 })
 
@@ -114,14 +118,14 @@ const HighlightHandler = (index) => {
   })
   // 切换高亮的时候把tid传给HeadlineNews组件
   findAllTypeList.value[index].isHighlight = true
-  Bus.emit('tid', findAllTypeList.value[index].tid)
+  Bus.emit('id', findAllTypeList.value[index].id)
 }
 
 // 点击退出登录的回调
 const Logout = () => {
   removeToken()
   userInfoStore.initUserInfo()
-  nickName.value = ""
+  nickname.value = ""
   router.go({name: "HeadlineNews"});
 }
 

@@ -1,17 +1,17 @@
 <template>
   <div class="seeDetails">
     <div>
-      <h4>{{ detailList.title }}</h4>
+      <h4>{{ detailList.name }}</h4>
     </div>
     <div style="margin-right: 250px">
-      <span>{{ detailList.typeName }}</span>
-      <span>{{ detailList.pageViews }}浏览</span>
+      <span>{{ detailList.classifyId }}</span>
+      <span>{{ detailList.views }}浏览</span>
       <span>{{ detailList.pastHours }}小时前</span>
     </div>
 
     <div style="width: 500px; margin: 20px 0px 0px 70px">
       <p>
-        {{ detailList.article }}
+        {{ detailList.content }}
       </p>
     </div>
   </div>
@@ -34,6 +34,7 @@ const route = useRoute() // 路由信息对象
 const detailList = ref({}) //详情数据
 //获取详情初始化数据
 const getDetailList = async () => {
+  let newsId = route.query.id;
   let result = await getshowHeadlineDetail(route.query.hid)
   detailList.value = result.headline
 }
